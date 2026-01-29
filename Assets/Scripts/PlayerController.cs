@@ -3,6 +3,13 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 12;
+    public float gravity = 9.8f; //player gravity
+    public float groundCheckRadius = 0.15f; //how far off the ground is grounded?
+    public LayerMask groundLayer;
+
+    private bool isGrounded;
+    private Vector3 velocity;
+    private Transform feet;
 
     private CharacterController controller;
 
@@ -10,10 +17,20 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        feet = transform.Find("feet");
 
     }
 
     private void Update()
+    {
+        CheckIsGrounded();
+        Move();
+        ApplyGravity();
+    }
+
+
+
+    private void Move()
     {
         float x = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
         float z = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
@@ -22,4 +39,21 @@ public class PlayerController : MonoBehaviour
         controller.Move(move);
     }
 
+    private void CheckIsGrounded()
+    {
+        isGrounded = Physics.CheckSphere(feet.position, groundCheckRadius, groundLayer);
+    }
+
+
+    private void ApplyGravity()
+    {
+        velocity += Vector3.down * gravity * Time.deltaTime;
+
+        if (isGrounded)
+        {
+            velocity = Vector3.zero;
+        }
+
+        controller.Move(velocity); 
+    }
 }
