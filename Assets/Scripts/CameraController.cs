@@ -18,6 +18,8 @@ public class CameraController : MonoBehaviour
 
     public void Update()
     {
+        if (Time.time < 0.5f)
+            return;
         //get mouse input
         //Time.deltaTime is time between previous frame, Time.time is seconds elapsed
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
